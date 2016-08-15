@@ -7,7 +7,7 @@ import "math"
 // It must also implement FromRaw which returns a new instance based on a power of 2.
 type Option interface {
 	RawValue() uint32
-	FrowRaw(raw uint32) Option
+	FromRaw(raw uint32) Option
 }
 
 // OptionSet is typealias for uint64 and represents a collection of RawValues.
@@ -33,16 +33,16 @@ func (s OptionSet) Options(option Option) []Option {
 	next := nextPowerOfTwo(set)
 	maxSize := math.Log2(float64(next))
 	options := make([]Option, uint(maxSize), uint(maxSize))
-	newOption := option.FrowRaw(1)
+	newOption := option.FromRaw(1)
 	var index int
 
 	for set > 0 {
 		next = nextPowerOfTwo(set)
 		if set != next {
-			newOption = option.FrowRaw(next / 2)
+			newOption = option.FromRaw(next / 2)
 			set -= next / 2
 		} else {
-			newOption = option.FrowRaw(next)
+			newOption = option.FromRaw(next)
 			set -= next
 		}
 		options[index] = newOption
