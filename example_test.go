@@ -28,7 +28,7 @@ func (t AnimalTrait) FromRaw(raw uint32) optionset.Option {
 
 func Example() {
 	cat := optionset.New(Fluffy, EatsMeat, Wild)
-	traits := cat.Options(AnimalTrait{}.FromRaw(0))
+	traits := cat.Options(Fluffy)
 	for _, trait := range traits {
 		fmt.Println(trait)
 	}
