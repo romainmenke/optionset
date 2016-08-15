@@ -6,17 +6,17 @@ import "math"
 // It must implement a RawValue method which returns a unique power of 2.
 // It must also implement FromRaw which returns a new instance based on a power of 2.
 type Option interface {
-	RawValue() uint64
-	FrowRaw(raw uint64) Option
+	RawValue() uint32
+	FrowRaw(raw uint32) Option
 }
 
 // OptionSet is typealias for uint64 and represents a collection of RawValues.
 // These are derived from the sum of an array of Options.
-type OptionSet uint64
+type OptionSet uint32
 
 // New returns an OptionSet from an array of Options.
 func New(options ...Option) OptionSet {
-	var sum uint64
+	var sum uint32
 	for _, value := range options {
 		sum += value.RawValue()
 	}
@@ -25,12 +25,11 @@ func New(options ...Option) OptionSet {
 
 // Options returns an array of Options from an OptionSet
 func (s OptionSet) Options(option Option) []Option {
-
-	if uint64(s) <= 0 {
-		return nil
+	if uint32(s) <= 0 {
+		return []Option{}
 	}
 
-	set := uint64(s)
+	set := uint32(s)
 	next := nextPowerOfTwo(set)
 	maxSize := math.Log2(float64(next))
 	options := make([]Option, uint(maxSize), uint(maxSize))
@@ -41,27 +40,23 @@ func (s OptionSet) Options(option Option) []Option {
 		next = nextPowerOfTwo(set)
 		if set != next {
 			newOption = option.FrowRaw(next / 2)
-			options[index] = newOption
-			index++
 			set -= next / 2
 		} else {
 			newOption = option.FrowRaw(next)
-			options[index] = newOption
-			index++
 			set -= next
 		}
+		options[index] = newOption
+		index++
 	}
 
 	sized := options[:index]
-
 	for i, j := 0, len(sized)-1; i < j; i, j = i+1, j-1 {
 		sized[i], sized[j] = sized[j], sized[i]
 	}
-
 	return sized
 }
 
-func nextPowerOfTwo(v uint64) uint64 {
+func nextPowerOfTwo(v uint32) uint32 {
 	v--
 	v |= v >> 1
 	v |= v >> 2
@@ -70,8 +65,4 @@ func nextPowerOfTwo(v uint64) uint64 {
 	v |= v >> 16
 	v++
 	return v
-}
-
-func previousPowerOfTwo(v uint64) uint64 {
-	return nextPowerOfTwo(v) / 2
 }

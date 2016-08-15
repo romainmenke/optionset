@@ -1,17 +1,14 @@
 package optionset
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
 type enum int
 
-func (e enum) RawValue() uint64 {
-	return uint64(e)
+func (e enum) RawValue() uint32 {
+	return uint32(e)
 }
 
-func (e enum) FrowRaw(raw uint64) Option {
+func (e enum) FrowRaw(raw uint32) Option {
 	switch raw {
 	case 0:
 		return none
@@ -74,7 +71,7 @@ func BenchmarkNew(b *testing.B) {
 }
 
 func BenchmarkPower(b *testing.B) {
-	var n uint64 = 6543
+	var n uint32 = 6543
 	for i := 0; i < b.N; i++ {
 		power := nextPowerOfTwo(n)
 		_ = power
@@ -92,5 +89,13 @@ func BenchmarkOption(b *testing.B) {
 func TestMain(t *testing.T) {
 	myset := New(foo, fooz, g, j)
 	options := myset.Options(Option(none))
-	fmt.Println(options)
+	//fmt.Println(options)
+	_ = options
+}
+
+func TestEmpty(t *testing.T) {
+	myset := New()
+	options := myset.Options(Option(none))
+	//fmt.Println(options)
+	_ = options
 }
