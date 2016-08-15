@@ -8,7 +8,7 @@ func (e enum) RawValue() uint32 {
 	return uint32(e)
 }
 
-func (e enum) FrowRaw(raw uint32) Option {
+func (e enum) FromRaw(raw uint32) Option {
 	switch raw {
 	case 0:
 		return none
