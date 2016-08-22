@@ -36,3 +36,78 @@ There will be no fancy functions added to this package:
 
 Why? These are all iterative functions that can be optimized with the right context. Without that context it will result in slower code.
 Once in memory Arrays are also really really fast and good snippets exist for all functions you might need. Doing these inline will result in faster execution.
+
+### How?
+
+Assign unique powers of two with `1 << iota`.
+The rest is really easy.
+
+```go
+type AnimalTrait uint32
+
+const (
+    Fluffy AnimalTrait = 1 << iota
+    EatsMeat
+    ...
+)
+```
+
+Full Example :
+
+```go
+package main
+
+import (
+    "fmt"
+
+    "github.com/romainmenke/optionset"
+)
+
+type AnimalTrait uint32
+
+const (
+    Fluffy AnimalTrait = 1 << iota
+    EatsMeat
+    EatsPlants
+    Flying
+    Swimming
+    Friendly
+    Wild
+)
+
+func (t AnimalTrait) RawValue() uint32 {
+    return uint32(t)
+}
+
+func (t AnimalTrait) FromRaw(raw uint32) optionset.Option {
+    return AnimalTrait(raw)
+}
+
+func (t AnimalTrait) String() string {
+    switch t.RawValue() {
+    case 1:
+        return "Fluffy"
+    case 2:
+        return "Eats Meat"
+    case 4:
+        return "Eats Plants"
+    case 8:
+        return "Flying"
+    case 16:
+        return "Swimming"
+    case 32:
+        return "Friendly"
+    case 64:
+        return "Wild"
+    default:
+        return "Unknown"
+    }
+}
+
+func main() {
+    cat := optionset.New(Fluffy, EatsMeat, Wild)
+    traits := cat.Options(Fluffy)
+    fmt.Println(traits)
+
+}
+```
