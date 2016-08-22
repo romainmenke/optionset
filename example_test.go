@@ -50,11 +50,8 @@ func (t AnimalTrait) String() string {
 func Example() {
 	cat := optionset.New(Fluffy, EatsMeat, Wild)
 	traits := cat.Options(Fluffy)
-	for _, trait := range traits {
-		fmt.Println(trait)
-	}
+	fmt.Println(traits)
+
 	// Output:
-	// Fluffy
-	// Eats Meat
-	// Wild
+	// [Fluffy Eats Meat Wild]
 }
