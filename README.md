@@ -21,7 +21,7 @@ BenchmarkMarshalOptionSet-4     	 1000000	      1684 ns/op
 ```
 
 2 elements `Marshalled` and `Unmarshalled` as `Slice` and as `OptionSet`
-Almost than 0.5x speed-up
+Almost 0.5x speed-up
 ```
 BenchmarkMarshalSmallArray-4    	 1000000	      1547 ns/op
 BenchmarkMarshalSmallOptionSet-4	 1000000	      1076 ns/op
