@@ -70,17 +70,33 @@ func BenchmarkNew(b *testing.B) {
 	}
 }
 
-func BenchmarkPower(b *testing.B) {
-	var n uint32 = 6543
-	for i := 0; i < b.N; i++ {
-		power := nextPowerOfTwo(n)
-		_ = power
-	}
-}
+// func BenchmarkPower(b *testing.B) {
+// 	var n uint32 = 6543
+// 	for i := 0; i < b.N; i++ {
+// 		power := nextPowerOfTwo(n)
+// 		_ = power
+// 	}
+// }
 
 func BenchmarkOption(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		myset := New(foo, fooz, g, j)
+		options := myset.Options(Option(none))
+		_ = options
+	}
+}
+
+func BenchmarkOptionB(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		myset := New(foo, fooz)
+		options := myset.Options(Option(none))
+		_ = options
+	}
+}
+
+func BenchmarkOptionC(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		myset := New(foo, fooz, f, d, ee, c, g, j)
 		options := myset.Options(Option(none))
 		_ = options
 	}

@@ -25,27 +25,42 @@ func New(options ...Option) OptionSet {
 
 // Options returns an array of Options from an OptionSet
 func (s OptionSet) Options(option Option) []Option {
-	if uint32(s) <= 0 {
-		return []Option{}
-	}
 
 	set := uint32(s)
-	next := nextPowerOfTwo(set)
-	maxSize := math.Log2(float64(next))
-	options := make([]Option, uint(maxSize), uint(maxSize))
-	newOption := option.FromRaw(1)
+
+	if set <= 0 {
+		return nil
+	}
+
+	next := set
+
+	next--
+	next |= next >> 1
+	next |= next >> 2
+	next |= next >> 4
+	next |= next >> 8
+	next |= next >> 16
+	next++
+
+	maxSize := uint(math.Log2(float64(next)))
+	options := make([]Option, maxSize, maxSize)
 	var index int
 
 	for set > 0 {
-		next = nextPowerOfTwo(set)
+		next = set
+		next--
+		next |= next >> 1
+		next |= next >> 2
+		next |= next >> 4
+		next |= next >> 8
+		next |= next >> 16
+		next++
+
 		if set != next {
-			newOption = option.FromRaw(next / 2)
-			set -= next / 2
-		} else {
-			newOption = option.FromRaw(next)
-			set -= next
+			next = next / 2
 		}
-		options[index] = newOption
+		set -= next
+		options[index] = option.FromRaw(next)
 		index++
 	}
 
@@ -54,15 +69,4 @@ func (s OptionSet) Options(option Option) []Option {
 		sized[i], sized[j] = sized[j], sized[i]
 	}
 	return sized
-}
-
-func nextPowerOfTwo(v uint32) uint32 {
-	v--
-	v |= v >> 1
-	v |= v >> 2
-	v |= v >> 4
-	v |= v >> 8
-	v |= v >> 16
-	v++
-	return v
 }
