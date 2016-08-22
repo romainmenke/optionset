@@ -1,6 +1,10 @@
 package optionset
 
-import "testing"
+import (
+	"encoding/json"
+	"fmt"
+	"testing"
+)
 
 type enum int
 
@@ -102,6 +106,88 @@ func BenchmarkOptionC(b *testing.B) {
 	}
 }
 
+func BenchmarkMarshalSlice(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		array := []uint32{1, 4, 512, 64, 265, 32, 1024, 8192}
+		b, err := json.Marshal(array)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		var newArray []uint32
+		err = json.Unmarshal(b, &newArray)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
+}
+
+func BenchmarkMarshalOptionSet(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		set := New(foo, fooz, f, d, ee, c, g, j)
+		b, err := json.Marshal(set)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		var newRawSet uint32
+		err = json.Unmarshal(b, &newRawSet)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		newSet := OptionSet(newRawSet)
+
+		options := newSet.Options(Option(none))
+		_ = options
+	}
+}
+
+func BenchmarkMarshalSmallArray(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		array := []uint32{1, 4}
+		b, err := json.Marshal(array)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		var newArray []uint32
+		err = json.Unmarshal(b, &newArray)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
+}
+
+func BenchmarkMarshalSmallOptionSet(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		set := New(foo, fooz)
+		b, err := json.Marshal(set)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		var newRawSet uint32
+		err = json.Unmarshal(b, &newRawSet)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		newSet := OptionSet(newRawSet)
+
+		options := newSet.Options(Option(none))
+		_ = options
+	}
+}
+
 func TestMain(t *testing.T) {
 	myset := New(foo, fooz, g, j)
 	options := myset.Options(Option(none))
@@ -114,4 +200,27 @@ func TestEmpty(t *testing.T) {
 	options := myset.Options(Option(none))
 	//fmt.Println(options)
 	_ = options
+}
+
+func TestMarshal(t *testing.T) {
+	set := New(foo, fooz, f, d, ee, c, g, j)
+	b, err := json.Marshal(set)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	var newRawSet uint32
+	err = json.Unmarshal(b, &newRawSet)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	newSet := OptionSet(newRawSet)
+
+	_ = newSet.Options(Option(none))
+	if newSet != set {
+		t.Fail()
+	}
 }
