@@ -53,4 +53,8 @@ func Example() {
 	for _, trait := range traits {
 		fmt.Println(trait)
 	}
+	// Output:
+	// Fluffy
+	// Eats Meat
+	// Wild
 }
